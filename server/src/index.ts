@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes";
+import { connectDB } from "./config/db";
 
 // Load environment variables
 dotenv.config();
@@ -16,7 +17,10 @@ app.use(express.json());
 // Routes
 app.use("/api", routes);
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Connect to MongoDB
+connectDB().then(() => {
+  // Start server
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 });

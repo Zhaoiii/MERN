@@ -1,35 +1,30 @@
 // 定义响应接口
 export interface ApiResponse<T = any> {
   success: boolean;
-  message: string;
+  message?: string;
   data?: T;
   error?: string;
-  statusCode: number;
+  code: number;
 }
 
 // 响应处理类
 export class ResponseHandler {
   // 成功响应
-  static success<T>(
-    data: T,
-    message = "Operation successful",
-    statusCode = 200
-  ): ApiResponse<T> {
+  static success<T>(data: T, message = "", code = 200): ApiResponse<T> {
     return {
       success: true,
-      message,
       data,
-      statusCode,
+      code,
     };
   }
 
   // 错误响应
-  static error(message: string, statusCode = 400, error?: string): ApiResponse {
+  static error(message: string, code = 400, error?: string): ApiResponse {
     return {
       success: false,
       message,
       error,
-      statusCode,
+      code,
     };
   }
 
