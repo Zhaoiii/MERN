@@ -8,9 +8,7 @@ type ResponseData<T> = {
 };
 
 const service = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASEURL ||
-    "https://mern-production-3c92.up.railway.app/api/",
+  baseURL: import.meta.env.VITE_API_BASEURL || "http://127.0.0.1:3001/api",
   timeout: 10000,
 });
 
