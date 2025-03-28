@@ -14,6 +14,10 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// test router
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 // Routes
 app.use("/api", routes);
 
