@@ -2,26 +2,29 @@ import { Request, Response } from "express";
 import { ResponseHandler } from "../utils/response";
 import { User, IUser } from "../models/User";
 import jwt from "jsonwebtoken";
-import { AuthRequest } from "../middleware/auth";
 
 export class UserController {
   public static async register(req: Request, res: Response) {
     try {
       const { username, email, password } = req.body;
 
-      // 检查用户名是否已存在
+      // Check if username exists
       const existingUsername = await User.findOne({ username });
       if (existingUsername) {
-        return res.status(400).json(ResponseHandler.error("用户名已存在"));
+        return res
+          .status(400)
+          .json(ResponseHandler.error("Username already exists"));
       }
 
-      // 检查邮箱是否已存在
+      // Check if email exists
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
-        return res.status(400).json(ResponseHandler.error("邮箱已被注册"));
+        return res
+          .status(400)
+          .json(ResponseHandler.error("Email is already registered"));
       }
 
-      // 创建新用户
+      // create user
       const user = new User({
         username,
         email,
@@ -30,7 +33,7 @@ export class UserController {
 
       await user.save();
 
-      // 返回用户信息（不包含密码）
+      // return user information
       const userResponse = {
         id: user._id,
         username: user.username,
@@ -40,13 +43,17 @@ export class UserController {
 
       res.status(201).json(
         ResponseHandler.success({
-          message: "用户注册成功",
+          message: "User registration successful",
           user: userResponse,
         })
       );
     } catch (error) {
-      console.error("注册错误:", error);
-      res.status(500).json(ResponseHandler.error("注册失败，请稍后重试"));
+      console.error("Registration error:", error);
+      res
+        .status(500)
+        .json(
+          ResponseHandler.error("Registration failed, please try again later")
+        );
     }
   }
 
@@ -54,27 +61,24 @@ export class UserController {
     try {
       const { username, password } = req.body;
 
-      // 查找用户
       const user = await User.findOne({
         $or: [{ username }, { email: username }],
       });
 
-      console.log(user);
       if (!user) {
         return res
           .status(401)
-          .json(ResponseHandler.error("用户名/邮箱或密码错误"));
+          .json(ResponseHandler.error("Invalid username/email or password"));
       }
 
-      // 验证密码
       const isValidPassword = await user.comparePassword(password);
       if (!isValidPassword) {
         return res
           .status(401)
-          .json(ResponseHandler.error("用户名/邮箱或密码错误"));
+          .json(ResponseHandler.error("Invalid username/email or password"));
       }
 
-      // 生成JWT token
+      // generate token
       const token = jwt.sign(
         {
           id: user._id,
@@ -85,7 +89,7 @@ export class UserController {
         { expiresIn: "7d" }
       );
 
-      // 返回用户信息和token
+      // return user information
       const userResponse = {
         id: user._id,
         username: user.username,
@@ -95,14 +99,16 @@ export class UserController {
 
       res.json(
         ResponseHandler.success({
-          // message: "登录成功",
+          message: "Login successful",
           user: userResponse,
           token,
         })
       );
     } catch (error) {
-      console.error("登录错误:", error);
-      res.status(500).json(ResponseHandler.error("登录失败，请稍后重试"));
+      console.error("Login error:", error);
+      res
+        .status(500)
+        .json(ResponseHandler.error("Login failed, please try again later"));
     }
   }
 
@@ -112,13 +118,17 @@ export class UserController {
       const user = await User.findOne({ username }).select("-password");
 
       if (!user) {
-        return res.status(404).json(ResponseHandler.error("用户不存在"));
+        return res.status(404).json(ResponseHandler.error("User not found"));
       }
 
       res.json(ResponseHandler.success(user));
     } catch (error) {
-      console.error("查询用户错误:", error);
-      res.status(500).json(ResponseHandler.error("查询用户失败，请稍后重试"));
+      console.error("User query error:", error);
+      res
+        .status(500)
+        .json(
+          ResponseHandler.error("Failed to query user, please try again later")
+        );
     }
   }
 }

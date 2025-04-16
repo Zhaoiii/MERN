@@ -21,7 +21,9 @@ export const auth = async (
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json(ResponseHandler.error("请提供认证token"));
+      return res
+        .status(401)
+        .json(ResponseHandler.error("Authentication token is required"));
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as {
@@ -33,6 +35,6 @@ export const auth = async (
     req.params = decoded;
     next();
   } catch (error) {
-    res.status(401).json(ResponseHandler.error("无效的token"));
+    res.status(401).json(ResponseHandler.error("Invalid token"));
   }
 };

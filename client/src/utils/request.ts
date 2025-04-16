@@ -1,3 +1,4 @@
+import useAuthStore from "@/store/useAuthStore";
 import axios from "axios";
 
 type ResponseData<T> = {
@@ -39,6 +40,7 @@ service.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
+          useAuthStore.getState().logout();
           if (window.location.pathname !== "/login")
             window.location.href = "/login";
           message = "Authentication failed";
