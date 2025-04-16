@@ -6,9 +6,9 @@ import {
 
 const StyledContainer = styled(MuiContainer)(({ theme }) => ({
   backgroundColor: "#f5f5f5",
-  minHeight: "100vh", // 减去Header的高度
+  minHeight: "100vh",
   padding: theme.spacing(3),
-  marginTop: "0", // Header的高度
+  marginTop: "0",
   width: "100vw",
   transition: "all 0.3s ease-in-out",
 }));

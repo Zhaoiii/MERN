@@ -28,7 +28,6 @@ export default function Register() {
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
-        bgcolor: "background.default",
       }}
     >
       <Box
