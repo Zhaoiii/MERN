@@ -47,13 +47,11 @@ export class UserController {
           user: userResponse,
         })
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
       res
         .status(500)
-        .json(
-          ResponseHandler.error("Registration failed, please try again later")
-        );
+        .json(ResponseHandler.error(error?.message || "Registration failed"));
     }
   }
 
