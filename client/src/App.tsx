@@ -1,9 +1,8 @@
 import { useRoutes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Header from "./layout/Header";
 import appRoutes from "./routes";
-import Container from "./layout/Container";
 import { Suspense } from "react";
+import AuthGuard from "./components/AuthGuard";
 
 const theme = createTheme({
   palette: {
@@ -23,10 +22,9 @@ function App() {
   const RenderRoutes = useRoutes(appRoutes);
   return (
     <ThemeProvider theme={theme}>
-      <Header />
-      <Container>
-        <Suspense fallback={<div>Loading...</div>}>{RenderRoutes}</Suspense>
-      </Container>
+      <Suspense fallback={<div>Loading...</div>}>
+        <AuthGuard>{RenderRoutes}</AuthGuard>
+      </Suspense>
     </ThemeProvider>
   );
 }

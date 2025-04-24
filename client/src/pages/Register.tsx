@@ -1,129 +1,116 @@
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { authService } from "@/services/auth";
+import React from "react";
+import { Form, Input, Button, Card, message } from "antd";
+import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import { authService } from "../services/auth";
 
-export default function Register() {
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const password = data.get("password") as string;
-    const confirmPassword = data.get("confirmPassword") as string;
+interface RegisterForm {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
+const Register: React.FC = () => {
+  const onFinish = async (values: RegisterForm) => {
+    try {
+      if (values.password !== values.confirmPassword) {
+        message.error("两次输入的密码不一致");
+        return;
+      }
+
+      await authService.register({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      });
+
+      message.success("注册成功");
+      window.location.href = "/login";
+    } catch (error) {
+      message.error("注册失败，请稍后重试");
+      console.error(error);
     }
-
-    await authService.register({
-      username: data.get("username") as string,
-      email: data.get("email") as string,
-      password: password,
-    });
-    window.location.href = "/login";
   };
+
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
+    <div
+      style={{
+        height: "100vh",
         display: "flex",
+        justifyContent: "center",
         alignItems: "center",
+        background: "#f0f2f5",
       }}
     >
-      <Box
-        sx={{
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 3,
-          bgcolor: "background.paper",
-          width: "100%",
+      <Card
+        title="用户注册"
+        style={{
+          width: 400,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ fontWeight: "bold" }}
+        <Form
+          name="register"
+          onFinish={onFinish}
+          autoComplete="off"
+          size="large"
         >
-          <PersonAddIcon sx={{ verticalAlign: "bottom", mr: 1 }} />
-          User Registration
-        </Typography>
-
-        <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <TextField
-              name="username"
-              type="text"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter username"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <TextField
-              name="email"
-              type="email"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter email address"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <TextField
-              name="password"
-              type="password"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter password"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <TextField
-              name="confirmPassword"
-              type="password"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Confirm your password"
-            />
-          </div>
-
-          <Button type="submit" variant="contained" size="large">
-            Register Now
-          </Button>
-        </Box>
-
-        <Typography variant="body2" sx={{ mt: 4, textAlign: "center" }}>
-          Already have an account?
-          <Button
-            href="/login"
-            color="primary"
-            variant="text"
-            size="small"
-            sx={{ ml: 1 }}
+          <Form.Item
+            name="username"
+            rules={[
+              { required: true, message: "请输入用户名" },
+              { min: 3, message: "用户名至少3个字符" },
+              { max: 30, message: "用户名最多30个字符" },
+            ]}
           >
-            Login
-          </Button>
-        </Typography>
-      </Box>
-    </Container>
+            <Input prefix={<UserOutlined />} placeholder="用户名" />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            rules={[
+              { required: true, message: "请输入邮箱" },
+              { type: "email", message: "请输入有效的邮箱地址" },
+            ]}
+          >
+            <Input prefix={<MailOutlined />} placeholder="邮箱" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "请输入密码" },
+              { min: 6, message: "密码至少6个字符" },
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            rules={[
+              { required: true, message: "请确认密码" },
+              { min: 6, message: "密码至少6个字符" },
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="确认密码" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              注册
+            </Button>
+          </Form.Item>
+
+          <div style={{ textAlign: "center" }}>
+            已有账号？
+            <Link to="/login">立即登录</Link>
+          </div>
+        </Form>
+      </Card>
+    </div>
   );
-}
+};
+
+export default Register;

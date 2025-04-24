@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography, Container } from "@mui/material";
+import { Card, Typography, Spin, Descriptions } from "antd";
+import { UserOutlined, MailOutlined } from "@ant-design/icons";
 import { request } from "../utils/request";
 
 type User = {
@@ -15,7 +16,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const response = await request.get<User>("/user/profile");
-        if (!response.data?.data) new Error("Failed to fetch profile");
+        if (!response.data?.data) throw new Error("Failed to fetch profile");
         setUser(response.data.data!);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
@@ -26,24 +27,47 @@ export default function Profile() {
   }, []);
 
   if (!user) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Spin size="large" tip="加载中..." />
+      </div>
+    );
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Information
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body1" gutterBottom>
-              username: {user.username}
-            </Typography>
-            <Typography variant="body1">Email: {user.email}</Typography>
-          </Box>
-        </CardContent>
+    <div>
+      <Card
+        style={{ maxWidth: 800, margin: "0 auto" }}
+        title={<Typography.Title level={3}>个人信息</Typography.Title>}
+      >
+        <Descriptions bordered column={1}>
+          <Descriptions.Item
+            label={
+              <>
+                <UserOutlined /> 用户名
+              </>
+            }
+          >
+            {user.username}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label={
+              <>
+                <MailOutlined /> 邮箱
+              </>
+            }
+          >
+            {user.email}
+          </Descriptions.Item>
+        </Descriptions>
       </Card>
-    </Container>
+    </div>
   );
 }

@@ -1,88 +1,60 @@
 import useAuthStore from "@/store/useAuthStore";
-import { Box, Typography, Button } from "@mui/material";
+import { Typography, Button, Card, Space, Layout } from "antd";
+import { Link } from "react-router-dom";
+import { UserOutlined, LoginOutlined, FormOutlined } from "@ant-design/icons";
+
+const { Content } = Layout;
 
 export default function Home() {
   const { user } = useAuthStore();
+
   return (
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: 500,
-        mx: "auto",
-      }}
-    >
-      <Typography
-        variant="h4"
-        component="h1"
-        sx={{
-          fontWeight: "bold",
-          mb: 4,
-          color: "text.primary",
+    <Layout style={{ minHeight: "100vh" }}>
+      <Content
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "50px 20px",
+          background: "#f0f2f5",
         }}
       >
-        Welcome {user?.username}
-      </Typography>
-      <Box
-        sx={{
-          bgcolor: "background.paper",
-          borderRadius: 4,
-          boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.05)",
-          p: 6,
-          width: "100%",
-        }}
-      >
-        <Typography
-          variant="body1"
-          sx={{
-            mb: 4,
-            color: "text.secondary",
-          }}
-        >
-          This is a responsive homepage example built with Material UI
-        </Typography>
-        {!user && (
-          <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-            <Button
-              href="/register"
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                px: 5,
-                py: 1.75,
-                borderRadius: 2,
-                fontSize: "1.1rem",
-                transition: "all 0.2s",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              Register
-            </Button>
-            <Button
-              href="/login"
-              variant="outlined"
-              color="primary"
-              size="large"
-              sx={{
-                px: 5,
-                py: 1.75,
-                borderWidth: 2,
-                borderRadius: 2,
-                fontSize: "1.1rem",
-                transition: "all 0.2s",
-                "&:hover": {
-                  borderWidth: 2,
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              Login
-            </Button>
-          </Box>
-        )}
-      </Box>
-    </Box>
+        <Card style={{ width: "100%", maxWidth: 500, textAlign: "center" }}>
+          <Typography.Title level={2}>
+            欢迎{user?.username ? ` ${user.username}` : "来到我们的平台"}
+          </Typography.Title>
+
+          <Typography.Paragraph
+            style={{ fontSize: "16px", marginBottom: "24px" }}
+          >
+            这是一个使用MERN技术栈和Ant Design构建的现代化Web应用
+          </Typography.Paragraph>
+
+          {!user && (
+            <Space size="middle" style={{ marginTop: "24px" }}>
+              <Link to="/register">
+                <Button type="primary" icon={<FormOutlined />} size="large">
+                  注册
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button icon={<LoginOutlined />} size="large">
+                  登录
+                </Button>
+              </Link>
+            </Space>
+          )}
+
+          {user && (
+            <Link to="/profile">
+              <Button type="primary" icon={<UserOutlined />} size="large">
+                个人中心
+              </Button>
+            </Link>
+          )}
+        </Card>
+      </Content>
+    </Layout>
   );
 }

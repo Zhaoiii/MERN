@@ -1,107 +1,80 @@
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import useAuthStore from "@/store/useAuthStore";
+import React from "react";
+import { Form, Input, Button, Card, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 
-export default function Login() {
+interface LoginForm {
+  username: string;
+  password: string;
+}
+
+const Login: React.FC = () => {
   const store = useAuthStore();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(store);
-    const data = new FormData(event.currentTarget);
-
+  const onFinish = async (values: LoginForm) => {
     try {
-      await store.login({
-        username: data.get("username") as string,
-        password: data.get("password") as string,
-      });
-      window.location.href = "/user";
+      await store.login(values);
+      message.success("登录成功");
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.log(error);
+      message.error("登录失败，请检查用户名和密码");
+      console.error(error);
     }
   };
+
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
+    <div
+      style={{
+        height: "100vh",
         display: "flex",
+        justifyContent: "center",
         alignItems: "center",
+        background: "#f0f2f5",
       }}
     >
-      <Box
-        sx={{
-          p: 6,
-          borderRadius: 4,
-          boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.05)",
-          bgcolor: "background.paper",
-          width: "100%",
-          // maxWidth: 500,
+      <Card
+        title="系统登录"
+        style={{
+          width: 400,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ fontWeight: "bold" }}
+        <Form
+          name="login"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          autoComplete="off"
+          size="large"
         >
-          <LockOpenIcon sx={{ verticalAlign: "bottom", mr: 1 }} />
-          User Login
-        </Typography>
-
-        <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <TextField
-              name="username"
-              type="username"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter username"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <TextField
-              name="password"
-              type="password"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter password"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            sx={{ mt: 2 }}
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "请输入用户名" }]}
           >
-            Login Now
-          </Button>
-        </Box>
+            <Input prefix={<UserOutlined />} placeholder="用户名" />
+          </Form.Item>
 
-        <Typography variant="body2" sx={{ mt: 4, textAlign: "center" }}>
-          Don't have an account?
-          <Button
-            href="/register"
-            color="primary"
-            variant="text"
-            size="small"
-            sx={{ ml: 1 }}
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "请输入密码" }]}
           >
-            Register Now
-          </Button>
-        </Typography>
-      </Box>
-    </Container>
+            <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              登录
+            </Button>
+          </Form.Item>
+
+          <div style={{ textAlign: "center" }}>
+            还没有账号？
+            <Link to="/register">立即注册</Link>
+          </div>
+        </Form>
+      </Card>
+    </div>
   );
-}
+};
+
+export default Login;

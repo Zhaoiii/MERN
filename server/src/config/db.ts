@@ -2,9 +2,13 @@ import mongoose from "mongoose";
 
 export const connectDB = async () => {
   try {
-    const mongoUri =
-      process.env.MONGODB_URI || "mongodb://localhost:27017/mern-app";
-    await mongoose.connect(mongoUri);
+    console.log("MongoDB Connecting...");
+    const mongoUri = process.env.MONGODB_URI;
+    if (!mongoUri) {
+      console.error("MongoDB URI not found in environment variables");
+      process.exit(1);
+    }
+    await mongoose.connect(mongoUri, {});
     console.log("MongoDB Connected...");
   } catch (err) {
     console.error("Error connecting to MongoDB:", err);
