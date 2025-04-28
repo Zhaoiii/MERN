@@ -5,6 +5,8 @@ import {
   UserOutlined,
   TeamOutlined,
   SettingOutlined,
+  BookOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { RouteObject } from "react-router-dom";
 
@@ -43,7 +45,41 @@ export const routeConfigs: RouteConfig[] = [
         icon: <UserOutlined />,
         label: "个人信息",
         path: "profile",
+        hideInMenu: true,
         Component: React.lazy(() => import("../pages/Profile")),
+      },
+      {
+        key: "students",
+        icon: <BookOutlined />,
+        label: "学生管理",
+        path: "students",
+        Component: React.lazy(() => import("../pages/Students")),
+      },
+      {
+        key: "dataset",
+        icon: <DatabaseOutlined />,
+        label: "数据集",
+        path: "dataset",
+        children: [
+          {
+            key: "dataset-manage",
+            label: "数据集管理",
+            path: "manage",
+            Component: React.lazy(() => import("../pages/Dataset")),
+          },
+          {
+            key: "dimension-manage",
+            label: "维度管理",
+            path: "dimension",
+            Component: React.lazy(() => import("../pages/Dimension")),
+          },
+          {
+            key: "rule-manage",
+            label: "条例管理",
+            path: "rule",
+            Component: React.lazy(() => import("../pages/Rule")),
+          },
+        ],
       },
       {
         key: "settings",

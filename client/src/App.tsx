@@ -20,6 +20,7 @@ const theme = createTheme({
 
 function App() {
   const RenderRoutes = useRoutes(appRoutes);
+
   return (
     <ThemeProvider theme={theme}>
       <Suspense fallback={<div>Loading...</div>}>

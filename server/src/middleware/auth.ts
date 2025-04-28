@@ -32,7 +32,12 @@ export const auth = async (
       email: string;
     };
 
-    req.params = decoded;
+    req.params = {
+      ...req.params,
+      requestUserId: decoded.id,
+      requestUserEmail: decoded.email,
+      requestUsername: decoded.username,
+    };
     next();
   } catch (error) {
     res.status(401).json(ResponseHandler.error("Invalid token"));

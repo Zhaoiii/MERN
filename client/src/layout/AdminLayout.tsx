@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Layout, Menu, theme, Button } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
@@ -7,28 +7,48 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import useAuthStore from "../store/useAuthStore";
-import { routeConfigs } from "../routes";
+import { RouteConfig, routeConfigs } from "../routes";
+import { ItemType, MenuItemType } from "antd/es/menu/interface";
 
 const { Header, Sider, Content } = Layout;
 
 const AdminLayout: React.FC = () => {
-  // 从routeConfigs中提取菜单项
-  const menuItems =
-    routeConfigs[0].children
-      ?.filter((route) => !route.hideInMenu)
-      .map((route) => ({
-        key: route.key,
-        icon: route.icon,
-        label: route.label,
-        children: [],
-        onClick: () => navigate(route.path),
-      })) || [];
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const getMenuItem = (
+    route: RouteConfig,
+    prefix: string = ""
+  ): ItemType<MenuItemType> => {
+    return {
+      key: [prefix, route.path].join("/"),
+      icon: route.icon,
+      label: route.label,
+      children: route.children
+        ? route.children.map((t) =>
+            getMenuItem(t, [prefix, route.path].join("/"))
+          )
+        : undefined,
+      onClick: (e) => {
+        console.log([prefix, route.path].join("/"), "----", e);
+
+        navigate(e.key);
+      },
+    };
+  };
+
+  // 从routeConfigs中提取菜单项
+  const menuItems = useMemo(() => {
+    return (
+      routeConfigs[0].children
+        ?.filter((route) => !route.hideInMenu)
+        .map((t) => getMenuItem(t)) || []
+    );
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -64,14 +84,14 @@ const AdminLayout: React.FC = () => {
               height: 64,
             }}
           />
-          <span style={{ marginLeft: 8 }}>欢迎, {user?.username}</span>
+          <span style={{ marginLeft: 8 }}>Welcome, {user?.username}</span>
           <Button
             type="text"
             icon={<LogoutOutlined />}
             onClick={handleLogout}
             style={{ float: "right", marginRight: 24 }}
           >
-            退出登录
+            Logout
           </Button>
         </Header>
         <Content
