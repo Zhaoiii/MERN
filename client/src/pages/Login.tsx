@@ -1,107 +1,93 @@
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { Card, Form, Input, Button, Typography, Space, message } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import useAuthStore from "@/store/useAuthStore";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const store = useAuthStore();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(store);
-    const data = new FormData(event.currentTarget);
+  const handleSubmit = async (values: {
+    username: string;
+    password: string;
+  }) => {
+    const result = await store.login(values);
 
-    try {
-      await store.login({
-        username: data.get("username") as string,
-        password: data.get("password") as string,
-      });
+    if (result.isSuccess) {
       window.location.href = "/user";
-    } catch (error) {
-      console.log(error);
+    } else {
+      message.error(result.error || "Login failed");
     }
   };
+
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
+    <div
+      style={{
+        minHeight: "calc(100vh - 64px)",
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
       }}
     >
-      <Box
-        sx={{
-          p: 6,
-          borderRadius: 4,
-          boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.05)",
-          bgcolor: "background.paper",
+      <Card
+        style={{
           width: "100%",
-          // maxWidth: 500,
+          maxWidth: 400,
+          boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.05)",
         }}
+        title={
+          <Space>
+            <LockOutlined />
+            <span>User Login</span>
+          </Space>
+        }
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ fontWeight: "bold" }}
+        <Form
+          name="login"
+          onFinish={handleSubmit}
+          layout="vertical"
+          requiredMark={false}
         >
-          <LockOpenIcon sx={{ verticalAlign: "bottom", mr: 1 }} />
-          User Login
-        </Typography>
-
-        <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <TextField
-              name="username"
-              type="username"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter username"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <TextField
-              name="password"
-              type="password"
-              fullWidth
-              required
-              margin="normal"
-              placeholder="Enter password"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            sx={{ mt: 2 }}
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "Please input your username!" }]}
           >
-            Login Now
-          </Button>
-        </Box>
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Username"
+              size="large"
+            />
+          </Form.Item>
 
-        <Typography variant="body2" sx={{ mt: 4, textAlign: "center" }}>
-          Don't have an account?
-          <Button
-            href="/register"
-            color="primary"
-            variant="text"
-            size="small"
-            sx={{ ml: 1 }}
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "Please input your password!" }]}
           >
-            Register Now
-          </Button>
-        </Typography>
-      </Box>
-    </Container>
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Password"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block size="large">
+              Login Now
+            </Button>
+          </Form.Item>
+        </Form>
+
+        <div style={{ textAlign: "center" }}>
+          <Typography.Text>
+            Don't have an account?{" "}
+            <Link to="/register">
+              <Button type="link" size="small">
+                Register Now
+              </Button>
+            </Link>
+          </Typography.Text>
+        </div>
+      </Card>
+    </div>
   );
 }

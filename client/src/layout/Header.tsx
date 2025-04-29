@@ -1,6 +1,9 @@
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { Layout, Menu, Button, Space } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
+import { UserOutlined, LoginOutlined, LogoutOutlined } from "@ant-design/icons";
+
+const { Header: AntHeader } = Layout;
 
 const Header = () => {
   const navigate = useNavigate();
@@ -12,39 +15,47 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component={Link}
-          to="/"
-          sx={{ flexGrow: 1, textDecoration: "none", color: "inherit" }}
-        >
-          MERN App
-        </Typography>
-        <Box>
+    <AntHeader style={{ background: "#fff", padding: "0 24px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+          <h1 style={{ margin: 0, fontSize: "20px" }}>MERN App</h1>
+        </Link>
+        <Space>
           {user ? (
             <>
-              <Button color="inherit" component={Link} to="/user">
-                {user.username}
+              <Button type="link" icon={<UserOutlined />}>
+                <Link to="/user">{user.username}</Link>
               </Button>
-              <Button color="inherit" onClick={handleLogout}>
+              <Button
+                type="link"
+                icon={<LogoutOutlined />}
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Button color="inherit" component={Link} to="/login">
-                Login
+              <Button type="link" icon={<LoginOutlined />}>
+                <Link to="/login">Login</Link>
               </Button>
-              <Button color="inherit" component={Link} to="/register">
-                Register
+              <Button type="primary">
+                <Link to="/register" style={{ color: "inherit" }}>
+                  Register
+                </Link>
               </Button>
             </>
           )}
-        </Box>
-      </Toolbar>
-    </AppBar>
+        </Space>
+      </div>
+    </AntHeader>
   );
 };
 

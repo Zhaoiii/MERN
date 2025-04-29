@@ -24,17 +24,14 @@ type LoginResponse = {
 
 export const authService = {
   async login(params: LoginParams) {
-    const response = await request.post<LoginResponse>("/auth/login", params);
-    return response.data;
+    return await request.post<LoginResponse>("/auth/login", params);
   },
 
   async register(params: RegisterParams) {
-    const response = await request.post<User>("/auth/register", params);
-    return response.data;
+    return await request.post<User>("/auth/register", params);
   },
 
   async getProfile() {
-    const response = await request.get<User>("/auth/profile");
-    return response.data;
+    return await request.get<User>("/auth/profile");
   },
 };

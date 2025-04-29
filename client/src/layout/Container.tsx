@@ -1,27 +1,23 @@
-import {
-  Container as MuiContainer,
-  ContainerProps,
-  styled,
-} from "@mui/material";
+import { Layout } from "antd";
+import { ReactNode } from "react";
 
-const StyledContainer = styled(MuiContainer)(({ theme }) => ({
-  backgroundColor: "#f5f5f5",
-  minHeight: "100vh",
-  padding: theme.spacing(3),
-  marginTop: "0",
-  width: "100vw",
-  transition: "all 0.3s ease-in-out",
-}));
+const { Content } = Layout;
 
-interface CustomContainerProps extends ContainerProps {
-  children: React.ReactNode;
+interface ContainerProps {
+  children: ReactNode;
 }
 
-const Container = ({ children, ...props }: CustomContainerProps) => {
+const Container = ({ children }: ContainerProps) => {
   return (
-    <StyledContainer maxWidth={false} {...props}>
+    <Content
+      style={{
+        padding: "24px",
+        minHeight: "calc(100vh - 64px)",
+        background: "#f5f5f5",
+      }}
+    >
       {children}
-    </StyledContainer>
+    </Content>
   );
 };
 
