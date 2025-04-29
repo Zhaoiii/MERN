@@ -10,13 +10,7 @@ export default function Login() {
     username: string;
     password: string;
   }) => {
-    const result = await store.login(values);
-
-    if (result.isSuccess) {
-      window.location.href = "/user";
-    } else {
-      message.error(result.error || "Login failed");
-    }
+    await store.login(values);
   };
 
   return (

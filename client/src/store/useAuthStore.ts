@@ -1,6 +1,5 @@
 import { authService } from "@/services/auth";
 import { create } from "zustand";
-import { message } from "antd";
 
 interface User {
   id: string;
@@ -11,10 +10,7 @@ interface User {
 interface AuthState {
   token: string | null;
   user: User | null;
-  login: (query: {
-    username: string;
-    password: string;
-  }) => Promise<{ isSuccess: boolean; error: string | null }>;
+  login: (query: { username: string; password: string }) => Promise<unknown>;
   logout: () => void;
 }
 
@@ -29,9 +25,7 @@ const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       set({ token, user });
-      return { isSuccess: true, error: null };
-    } else {
-      return { isSuccess: false, error: result.error };
+      window.location.href = "/dashboard";
     }
   },
   logout: () => {

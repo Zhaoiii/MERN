@@ -1,12 +1,12 @@
 import { useRoutes } from "react-router-dom";
 import { ConfigProvider } from "antd";
-import Header from "./layout/Header";
-import appRoutes from "./routes";
-import Container from "./layout/Container";
+import appRoutes from "./routes/index";
 import { Suspense } from "react";
+import RouteGuard from "./components/RouteGuard";
 
 function App() {
-  const RenderRoutes = useRoutes(appRoutes);
+  const routes = useRoutes(appRoutes);
+
   return (
     <ConfigProvider
       theme={{
@@ -16,10 +16,9 @@ function App() {
         },
       }}
     >
-      <Header />
-      <Container>
-        <Suspense fallback={<div>Loading...</div>}>{RenderRoutes}</Suspense>
-      </Container>
+      <Suspense fallback={<div>Loading...</div>}>
+        <RouteGuard>{routes}</RouteGuard>
+      </Suspense>
     </ConfigProvider>
   );
 }
